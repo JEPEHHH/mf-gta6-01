@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Solara Bay — Open-World Coastal Crime Action</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div id="game-shell">
+    <canvas id="game-canvas" width="1280" height="720"></canvas>
+
+    <!-- In-Game HUD Overlay -->
+    <div id="hud" class="hud hidden">
+      <!-- Top Left: Mission Objective & Story Feed -->
+      <div id="mission-panel" class="hud-panel mission-panel">
+        <div class="mission-header">
+          <span id="mission-tag" class="mission-tag">STORY MISSION</span>
+          <span id="mission-progress" class="mission-progress">1 / 6</span>
+        </div>
+        <div id="mission-title" class="mission-title">Welcome to Solara Bay</div>
+        <div id="mission-objective" class="mission-objective">Meet Elena at Coral Strip Pier</div>
+        <div id="mission-timer" class="mission-timer hidden">01:30</div>
+      </div>
+
+      <!-- Top Center: Wanted & Action Banner -->
+      <div id="action-banner" class="action-banner hidden">
+        <div id="action-banner-title" class="action-banner-title">MISSION PASSED</div>
+        <div id="action-banner-sub" class="action-banner-sub">+$2,500 · +150 RESPECT</div>
+      </div>
+
+      <!-- Top Right: Wanted Stars, Cash, Respect, Weapon & Ammo -->
+      <div id="status-panel" class="hud-panel status-panel">
+        <div class="wanted-row" id="wanted-stars" aria-label="Wanted Level">
+          <span class="star" data-star="1">&#9733;</span>
+          <span class="star" data-star="2">&#9733;</span>
+          <span class="star" data-star="3">&#9733;</span>
+          <span class="star" data-star="4">&#9733;</span>
+          <span class="star" data-star="5">&#9733;</span>
+        </div>
+        <div class="economy-row">
+          <span id="hud-cash" class="hud-cash">$1,250</span>
+          <span id="hud-respect" class="hud-respect">REP 100</span>
+        </div>
+        <div class="weapon-card">
+          <div class="weapon-info">
+            <span id="hud-weapon-name" class="weapon-name">9mm Coastal Pistol</span>
+            <span id="hud-ammo" class="weapon-ammo">15 / 90</span>
+          </div>
+          <div class="weapon-slots" id="weapon-slots">
+            <span class="slot active" data-slot="0">1</span>
+            <span class="slot" data-slot="1">2</span>
+            <span class="slot" data-slot="2">3</span>
+            <span class="slot" data-slot="3">4</span>
+          </div>
+        </div>
+        <div class="time-row">
+          <span id="hud-clock" class="hud-clock">17:40</span>
+          <span id="hud-phase" class="hud-phase">GOLDEN HOUR</span>
+        </div>
+      </div>
+
+      <!-- Bottom Left: Minimap, Health/Armor & District -->
+      <div id="radar-cluster" class="radar-cluster">
+        <div class="minimap-frame">
+          <canvas id="minimap-canvas" width="210" height="156"></canvas>
+          <div class="minimap-compass">N</div>
+          <div id="hud-district" class="minimap-district">CORAL STRIP</div>
+        </div>
+        <div class="vitals-bars">
+          <div class="bar-wrap health-wrap">
+            <div id="bar-health" class="bar-fill health-fill" style="width: 100%"></div>
+            <span class="bar-label">HP <strong id="val-health">100</strong></span>
+          </div>
+          <div class="bar-wrap armor-wrap">
+            <div id="bar-armor" class="bar-fill armor-fill" style="width: 50%"></div>
+            <span class="bar-label">ARM <strong id="val-armor">50</strong></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Center: Context Prompt & Dialogue Subtitle -->
+      <div id="bottom-center" class="bottom-center">
+        <div id="context-prompt" class="context-prompt hidden">Press [E] to steal Solara GT</div>
+        <div id="dialogue-box" class="dialogue-box hidden">
+          <span id="dialogue-speaker" class="dialogue-speaker">ELENA:</span>
+          <span id="dialogue-text" class="dialogue-text">Keep your eyes on the harbor bridge.</span>
+        </div>
+      </div>
+
+      <!-- Bottom Right: Speedometer, Radio & Quick Controls -->
+      <div id="vehicle-cluster" class="vehicle-cluster">
+        <div id="radio-toast" class="radio-toast">
+          <span class="radio-dot"></span>
+          <span id="radio-name">SOLARA WAVE FM 98.4</span>
+        </div>
+        <div id="speedo-card" class="hud-panel speedo-card hidden">
+          <div id="vehicle-name" class="vehicle-name">Solara GT</div>
+          <div class="speed-readout">
+            <span id="speed-val" class="speed-val">0</span>
+            <span class="speed-unit">KM/H</span>
+          </div>
+          <div class="vehicle-hp-bar">
+            <div id="vehicle-hp-fill" class="vehicle-hp-fill" style="width: 100%"></div>
+          </div>
+        </div>
+        <div class="controls-strip">
+          <span><b>WASD</b> Move/Drive</span>
+          <span><b>E</b> Enter Car</span>
+          <span><b>LMB</b> Fire</span>
+          <span><b>1-4</b> Weapons</span>
+          <span><b>R</b> Radio</span>
+          <span><b>ESC</b> Menu</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Start / Pause / Save Menu Overlay -->
+    <div id="menu-overlay" class="menu-overlay">
+      <div class="menu-backdrop"></div>
+      <div class="menu-card">
+        <div class="menu-brand">
+          <div class="brand-kicker">COASTAL OPEN-WORLD CRIME SANDBOX</div>
+          <h1 class="brand-title">SOLARA <span>BAY</span></h1>
+          <p class="brand-sub">Four Districts · Dynamic Police Chase · Story Heists · Full Free Roam</p>
+        </div>
+
+        <div class="menu-grid">
+          <div class="menu-actions">
+            <button id="btn-play" class="menu-btn primary">PLAY SOLARA BAY</button>
+            <button id="btn-resume" class="menu-btn primary hidden">RESUME GAME</button>
+            <button id="btn-continue" class="menu-btn accent hidden">CONTINUE SAVED GAME</button>
+            <button id="btn-save" class="menu-btn hidden">SAVE PROGRESS</button>
+            <button id="btn-new" class="menu-btn">NEW CAREER</button>
+            <button id="btn-audio" class="menu-btn">SOUND: ON</button>
+          </div>
+
+          <div class="menu-info">
+            <div class="info-section">
+              <div class="info-title">SAVE SLOT &amp; CAREER</div>
+              <div id="save-summary" class="save-summary">No saved career yet — start fresh in Coral Strip.</div>
+            </div>
+            <div class="info-section">
+              <div class="info-title">DISTRICTS OF SOLARA BAY</div>
+              <div class="district-chips">
+                <span class="chip coral">Coral Strip</span>
+                <span class="chip downtown">Solara Downtown</span>
+                <span class="chip palms">Old Palms</span>
+                <span class="chip harbor">Harbor Docks</span>
+              </div>
+            </div>
+            <div class="info-section">
+              <div class="info-title">CONTROLS</div>
+              <ul class="controls-list">
+                <li><b>WASD / Arrows</b> — Walk, Sprint (<b>Shift</b>), Steer &amp; Throttle</li>
+                <li><b>Mouse + Click</b> — Aim &amp; Fire / Drive-By Shoot</li>
+                <li><b>E or F</b> — Steal, Enter or Exit Nearby Vehicle</li>
+                <li><b>Space</b> — Handbrake Drift / Dodge Roll</li>
+                <li><b>1–4 / Wheel</b> — Pistol, SMG, Shotgun, Carbine</li>
+                <li><b>R / T / Q</b> — Radio Station · Time of Day · Quick Heal ($150)</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div id="menu-toast" class="menu-toast hidden">Progress saved to local storage.</div>
+      </div>
+    </div>
+
+    <!-- Wasted / Busted Overlay -->
+    <div id="respawn-overlay" class="respawn-overlay hidden">
+      <div class="respawn-card">
+        <div id="respawn-title" class="respawn-title">WASTED</div>
+        <div id="respawn-sub" class="respawn-sub">Treated at Solara Bay Clinic (-$250)</div>
+        <button id="btn-respawn" class="menu-btn primary">BACK TO THE STREETS</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>
