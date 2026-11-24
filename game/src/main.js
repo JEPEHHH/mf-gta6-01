@@ -1,11 +1,14 @@
 // Solara Bay main game loop, core state, camera controller, and module coordinator.
 
-import { WORLD, PLAYER_CONFIG, WEAPONS, getDistrictAt } from './config.js';
+import { WORLD, PLAYER_CONFIG, WEAPONS, RADIO_STATIONS, getDistrictAt } from './config.js';
 import { InputManager } from './input.js';
 import { CityWorld } from './world.js';
 import { WorldRenderer } from './render.js';
 import { VehicleSystem } from './vehicles.js';
 import { PedestrianSystem } from './pedestrians.js';
+import { PoliceSystem } from './police.js';
+import { CombatSystem } from './combat.js';
+import { AudioEngine } from './audio.js';
 
 export class SolaraBayGame {
   constructor() {
@@ -27,10 +30,10 @@ export class SolaraBayGame {
     this.player = this._createInitialPlayer();
     this.vehicles = new VehicleSystem(this, 4041);
     this.pedestrians = new PedestrianSystem(this, 8821);
-    this.police = null;
-    this.combat = null;
+    this.police = new PoliceSystem(this);
+    this.combat = new CombatSystem(this);
     this.missions = null;
-    this.audio = null;
+    this.audio = new AudioEngine();
     this.hud = null;
     this.save = null;
 
@@ -120,6 +123,12 @@ export class SolaraBayGame {
     this.timeOfDay = (this.timeOfDay + dt / 90) % 24;
     if (this.input.wasPressed('KeyT')) {
       this.timeOfDay = (this.timeOfDay + 4) % 24;
+    }
+    if (this.input.wasPressed('KeyR')) {
+      this.player.radioIndex = (this.player.radioIndex + 1) % RADIO_STATIONS.length;
+    }
+    if (this.input.mouseJustPressed || this.input.keys.size > 0) {
+      this.audio.unlock();
     }
 
     this.input.updateMouseWorld(this.camera, this.canvas.width, this.canvas.height);
