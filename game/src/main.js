@@ -4,6 +4,8 @@ import { WORLD, PLAYER_CONFIG, WEAPONS, getDistrictAt } from './config.js';
 import { InputManager } from './input.js';
 import { CityWorld } from './world.js';
 import { WorldRenderer } from './render.js';
+import { VehicleSystem } from './vehicles.js';
+import { PedestrianSystem } from './pedestrians.js';
 
 export class SolaraBayGame {
   constructor() {
@@ -23,8 +25,8 @@ export class SolaraBayGame {
     };
 
     this.player = this._createInitialPlayer();
-    this.vehicles = null;
-    this.pedestrians = null;
+    this.vehicles = new VehicleSystem(this, 4041);
+    this.pedestrians = new PedestrianSystem(this, 8821);
     this.police = null;
     this.combat = null;
     this.missions = null;
