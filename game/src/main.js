@@ -123,65 +123,71 @@ export class SolaraBayGame {
       this.player.weaponIndex = 1;
       this.missions.startMission(1, true);
       this.missions.stepIndex = 1;
-      this.missions.showDialogue('MATEO', 'Three cruisers on my bumper down Coral Strip — hold tight!');
+      this.missions.showDialogue('MATEO', 'Three SBPD cruisers on my tail down Coral Strip — flooring it!');
 
-      const heroCar = this.vehicles.spawnVehicle('sport', 3520, 1520, -Math.PI * 0.5, {
+      // Clear parked hero duplicates right around the avenue so the hero GT stands out cleanly
+      this.vehicles.list = this.vehicles.list.filter((v) => Math.hypot(v.x - 3520, v.y - 1500) > 280);
+
+      const heroCar = this.vehicles.spawnVehicle('sport', 3522, 1485, -Math.PI * 0.45, {
         color: '#ff3d68',
         driver: 'player',
         parked: false,
-        vx: 0,
-        vy: -380,
+        vx: 42,
+        vy: -435,
       });
       this.player.vehicle = heroCar;
       this.player.x = heroCar.x;
       this.player.y = heroCar.y;
 
       this.police.setWantedLevel(3);
-      const c1 = this.vehicles.spawnVehicle('police', 3494, 1690, -Math.PI * 0.48, {
+      const c1 = this.vehicles.spawnVehicle('police', 3490, 1635, -Math.PI * 0.47, {
         driver: 'police',
         aiRole: 'police',
         sirenOn: true,
-        vx: 20,
-        vy: -350,
+        vx: 25,
+        vy: -390,
       });
-      const c2 = this.vehicles.spawnVehicle('police', 3554, 1735, -Math.PI * 0.53, {
+      const c2 = this.vehicles.spawnVehicle('police', 3562, 1685, -Math.PI * 0.54, {
         driver: 'police',
         aiRole: 'police',
         sirenOn: true,
-        vx: -25,
-        vy: -340,
+        vx: -28,
+        vy: -380,
       });
-      this.vehicles.spawnVehicle('swat', 3518, 1845, -Math.PI * 0.5, {
+      this.vehicles.spawnVehicle('swat', 3445, 1605, -0.18, {
         driver: 'police',
         aiRole: 'police',
         sirenOn: true,
-        vx: 0,
-        vy: -280,
+        vx: 220,
+        vy: -35,
       });
-      // Nearby sports traffic & drifting tire marks
-      this.vehicles.spawnVehicle('muscle', 3550, 1340, -Math.PI * 0.5, { color: '#00d9e8', isTraffic: true });
-      this.vehicles.spawnVehicle('sedan', 3488, 1295, Math.PI * 0.5, { color: '#fbbf24', isTraffic: true });
-      this.world.addSkidMark(3506, 1640, 3508, 1555, 0.55);
-      this.world.addSkidMark(3532, 1640, 3534, 1555, 0.55);
-      this.combat.spawnSparks(c1.x + 12, c1.y - 22, 10);
-      this.combat.spawnSmoke(c2.x, c2.y + 18, 'rgba(220,230,240,0.55)', 11);
+      // Lively coastal traffic ahead & on ocean boulevard
+      this.vehicles.spawnVehicle('muscle', 3550, 1295, -Math.PI * 0.5, { color: '#00d9e8', isTraffic: true });
+      this.vehicles.spawnVehicle('sedan', 3492, 1255, Math.PI * 0.5, { color: '#fbbf24', isTraffic: true });
+      this.vehicles.spawnVehicle('sport', 3838, 1390, Math.PI * 0.5, { color: '#4be89a', isTraffic: true });
+      // Curved drift skidmarks + sparks + tire smoke
+      this.world.addSkidMark(3504, 1595, 3508, 1515, 0.55);
+      this.world.addSkidMark(3532, 1595, 3536, 1515, 0.55);
+      this.combat.spawnSparks(c1.x + 14, c1.y - 24, 12);
+      this.combat.spawnSmoke(heroCar.x - 10, heroCar.y + 32, 'rgba(235, 242, 250, 0.6)', 10);
+      this.combat.spawnSmoke(c2.x, c2.y + 24, 'rgba(220, 230, 240, 0.5)', 10);
 
-      for (let i = 0; i < 18; i += 1) {
+      for (let i = 0; i < 8; i += 1) {
         this.step(WORLD.fixedStep);
       }
-      this.camera.x = heroCar.x + 130;
-      this.camera.y = heroCar.y - 20;
+      this.camera.x = heroCar.x + 155;
+      this.camera.y = heroCar.y + 15;
       this.camera.zoom = 0.86;
       this.hud.update(this);
       this.renderer.render(this);
     } else if (shot === 'combat') {
-      // On-foot gunfight in Coral Strip Plaza against Marlin Syndicate crew with muzzle flash, tracers, pedestrians & cover cars
+      // On-foot gunfight in Coral Strip Boulevard against Marlin Syndicate crew with muzzle flash, tracers, explosion & cover cars
       this.mode = 'playing';
       this.hud.hideMenu();
-      this.timeOfDay = 18.4;
-      this.player.x = 3355;
-      this.player.y = 1485;
-      this.player.angle = Math.PI * 0.45;
+      this.timeOfDay = 18.2;
+      this.player.x = 3275;
+      this.player.y = 1585;
+      this.player.angle = 0.08;
       this.player.weaponIndex = 3;
       this.player.cash = 4320;
       this.player.respect = 310;
@@ -189,24 +195,40 @@ export class SolaraBayGame {
       this.missions.startMission(2, true);
       this.police.setWantedLevel(2);
 
-      // Parked cover vehicles + exploding syndicate car
-      this.vehicles.spawnVehicle('muscle', 3255, 1530, 0.25, { color: '#ff8c24', parked: true });
-      this.vehicles.spawnVehicle('police', 3515, 1595, Math.PI * 0.85, { driver: 'police', aiRole: 'police', sirenOn: true });
-      this.police.officers.push({ x: 3485, y: 1625, angle: -2.4, hp: 65, alive: true, fireCooldown: 0.4, speed: 150 });
+      // Position syndicate enemies cleanly along the open boulevard
+      const spots = [
+        { x: 3440, y: 1555 },
+        { x: 3495, y: 1625 },
+        { x: 3405, y: 1645 },
+        { x: 3560, y: 1585 },
+      ];
+      for (let i = 0; i < this.missions.enemies.length && i < spots.length; i += 1) {
+        this.missions.enemies[i].x = spots[i].x;
+        this.missions.enemies[i].y = spots[i].y;
+        this.missions.enemies[i].hp = i === 0 ? 45 : 80;
+      }
 
-      // Live gunfire tracers & explosion sparks
-      this.combat.fireProjectile(this.player.x, this.player.y, 1.38, WEAPONS[3], 'player');
-      this.combat.fireProjectile(this.player.x, this.player.y, 1.68, WEAPONS[3], 'player');
-      this.combat.fireProjectile(3360, 1650, -1.55, WEAPONS[1], 'enemy');
-      this.combat.triggerExplosion(3435, 1640, 60, 10, 'mission');
-      this.combat.addPopup(3310, 1525, '+$120', '#ffd166');
+      // Cover cars & arriving SBPD cruiser
+      this.vehicles.spawnVehicle('sport', 3215, 1615, 0.18, { color: '#00d9e8', parked: true });
+      this.vehicles.spawnVehicle('muscle', 3455, 1525, 2.8, { color: '#ff8c24', parked: true });
+      this.vehicles.spawnVehicle('police', 3565, 1465, Math.PI * 0.58, { driver: 'police', aiRole: 'police', sirenOn: true });
+      this.police.officers.push({ x: 3530, y: 1515, angle: 2.7, hp: 65, alive: true, fireCooldown: 0.4, speed: 150 });
 
-      for (let i = 0; i < 6; i += 1) {
+      // Vivid tracer volley, muzzle flash, fiery blast & cash popup
+      this.combat.fireProjectile(this.player.x, this.player.y, 0.05, WEAPONS[3], 'player');
+      this.combat.fireProjectile(this.player.x + 60, this.player.y + 4, 0.12, WEAPONS[3], 'player');
+      this.combat.fireProjectile(3440, 1555, Math.PI - 0.08, WEAPONS[1], 'enemy');
+      this.combat.spawnFire(3468, 1522);
+      this.combat.spawnFire(3452, 1532);
+      this.combat.spawnSparks(3442, 1552, 16);
+      this.combat.addPopup(3440, 1528, '+$120', '#ffd166');
+
+      for (let i = 0; i < 3; i += 1) {
         this.step(WORLD.fixedStep);
       }
-      this.camera.x = 3385;
-      this.camera.y = 1560;
-      this.camera.zoom = 1.04;
+      this.camera.x = 3400;
+      this.camera.y = 1580;
+      this.camera.zoom = 1.06;
       this.hud.update(this);
       this.renderer.render(this);
     } else if (shot === 'heist') {
@@ -214,27 +236,28 @@ export class SolaraBayGame {
       this.mode = 'playing';
       this.hud.hideMenu();
       this.timeOfDay = 14.5;
-      this.player.x = 2645;
-      this.player.y = 2855;
-      this.player.angle = -0.15;
+      this.player.x = 2635;
+      this.player.y = 2858;
+      this.player.angle = -0.18;
       this.player.weaponIndex = 2;
       this.player.cash = 9450;
       this.player.respect = 680;
       this.missions.startMission(3, true);
       this.police.setWantedLevel(2);
 
-      const getaway = this.vehicles.spawnVehicle('sport', 2580, 2880, 0.1, { color: '#00d9e8', parked: true });
-      this.vehicles.spawnVehicle('truck', 2890, 2860, Math.PI, { color: '#ea580c', parked: true });
-      this.vehicles.spawnVehicle('police', 2880, 2670, Math.PI * 0.65, { driver: 'police', aiRole: 'police', sirenOn: true });
-      this.combat.fireProjectile(this.player.x, this.player.y, -0.15, WEAPONS[2], 'player');
-      this.combat.spawnSparks(2740, 2765, 12);
+      const getaway = this.vehicles.spawnVehicle('sport', 2565, 2885, 0.08, { color: '#00d9e8', parked: true });
+      this.vehicles.spawnVehicle('truck', 2895, 2855, Math.PI, { color: '#ea580c', parked: true });
+      this.vehicles.spawnVehicle('police', 2880, 2675, Math.PI * 0.62, { driver: 'police', aiRole: 'police', sirenOn: true });
+      this.combat.fireProjectile(this.player.x, this.player.y, -0.18, WEAPONS[2], 'player');
+      this.combat.spawnSparks(2740, 2765, 14);
+      this.combat.spawnFire(2790, 2810);
       this.combat.addPopup(getaway.x, getaway.y - 34, 'GETAWAY READY', '#36e2ec');
 
-      for (let i = 0; i < 4; i += 1) {
+      for (let i = 0; i < 3; i += 1) {
         this.step(WORLD.fixedStep);
       }
       this.camera.x = 2735;
-      this.camera.y = 2835;
+      this.camera.y = 2850;
       this.camera.zoom = 0.96;
       this.hud.update(this);
       this.renderer.render(this);

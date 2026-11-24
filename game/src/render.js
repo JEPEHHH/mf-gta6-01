@@ -869,20 +869,29 @@ export class WorldRenderer {
         ctx.restore();
       }
 
-      // Rooftop swimming pool
+      // Rooftop swimming pool with lounge deck & water shimmer
       if (b.hasPool && b.w > 84 && b.h > 84) {
-        const pw = Math.min(54, b.w * 0.45);
-        const ph = Math.min(32, b.h * 0.34);
+        const pw = Math.min(58, b.w * 0.46);
+        const ph = Math.min(34, b.h * 0.34);
         const px = rx0 + b.w * 0.5 - pw * 0.5;
         const py = ry0 + b.h * 0.5 - ph * 0.5;
-        ctx.fillStyle = '#22d3ee';
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.24)';
+        ctx.fillRect(px - 8, py - 8, pw + 16, ph + 16);
+        ctx.fillStyle = '#18c6e0';
         ctx.fillRect(px, py, pw, ph);
+        ctx.fillStyle = 'rgba(180, 250, 255, 0.42)';
+        ctx.fillRect(px + 6, py + 6, pw * 0.45, 5);
+        ctx.fillRect(px + pw * 0.35, py + ph - 12, pw * 0.48, 4);
         ctx.strokeStyle = '#f8fafc';
         ctx.lineWidth = 2;
         ctx.strokeRect(px, py, pw, ph);
       } else if (b.hasHelipad) {
         const hx = rx0 + b.w * 0.5;
         const hy = ry0 + b.h * 0.5;
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.35)';
+        ctx.beginPath();
+        ctx.arc(hx, hy, 31, 0, Math.PI * 2);
+        ctx.fill();
         ctx.strokeStyle = '#ffd166';
         ctx.lineWidth = 3;
         ctx.beginPath();
@@ -894,10 +903,12 @@ export class WorldRenderer {
         ctx.textBaseline = 'middle';
         ctx.fillText('H', hx, hy + 1);
       } else {
-        // Rooftop AC units & skylight detail
-        ctx.fillStyle = 'rgba(15, 23, 42, 0.32)';
-        ctx.fillRect(rx0 + 12, ry0 + 12, 22, 16);
-        ctx.fillRect(rx0 + 40, ry0 + 14, 14, 14);
+        // Rooftop AC units, vents & glass skylight detail
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.28)';
+        ctx.fillRect(rx0 + 12, ry0 + 12, 24, 16);
+        ctx.fillRect(rx0 + 42, ry0 + 14, 15, 14);
+        ctx.fillStyle = 'rgba(125, 211, 252, 0.28)';
+        ctx.fillRect(rx0 + b.w - 36, ry0 + 14, 22, 18);
       }
 
       // Glowing Neon Roof Sign
